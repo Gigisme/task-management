@@ -1,0 +1,17 @@
+<style>
+
+</style>
+
+<main class="main">
+  <div class="relative border flex flex-col w-80 h-96">
+    <div>
+      <h2 class="top-2 left-2">{{name}}</h2>
+    </div>
+    <div *ngFor="let task of tasks" class="border">
+      <strong>Name:</strong> {{ task.name }} <br>
+      <strong>Description:</strong> {{ task.description }}
+    </div>
+    <button (click)="openCreateTaskDialog()" class="absolute bottom-2 left-2 border p-2 rounded">New Task</button>
+  </div>
+</main>
+
