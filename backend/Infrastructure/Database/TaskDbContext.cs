@@ -11,7 +11,7 @@ public class TaskDbContext : DbContext
     }
     
     public DbSet<User> Users { get; set; }
-    public DbSet<UserTask> Tasks { get; set; }
+    public DbSet<UserTask> UserTasks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,7 +21,7 @@ public class TaskDbContext : DbContext
         modelBuilder.Entity<UserTask>().HasKey(t => t.Id);
         modelBuilder.Entity<UserTask>()
             .HasOne(t => t.User)
-            .WithMany(u => u.Tasks)
+            .WithMany(u => u.UserTasks)
             .HasForeignKey(t => t.UserId);
     }
 }

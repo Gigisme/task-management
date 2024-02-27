@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(TaskDbContext))]
-    [Migration("20231216141901_Init")]
+    [Migration("20240227130920_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -75,12 +75,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -89,13 +89,13 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("UserTasks");
                 });
 
             modelBuilder.Entity("Domain.Models.UserTask", b =>
                 {
                     b.HasOne("Domain.Models.User", "User")
-                        .WithMany("Tasks")
+                        .WithMany("UserTasks")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -105,7 +105,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.User", b =>
                 {
-                    b.Navigation("Tasks");
+                    b.Navigation("UserTasks");
                 });
 #pragma warning restore 612, 618
         }

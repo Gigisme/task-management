@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Models.DTO;
 
-public class RegisterDTO
+public class RegistrationDto
 {
     [Required(ErrorMessage = "Username is required")]
     [StringLength(20, ErrorMessage = "Username must be between 3 and 20 characters", MinimumLength = 3)]

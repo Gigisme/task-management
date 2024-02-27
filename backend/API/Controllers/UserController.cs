@@ -8,20 +8,13 @@ namespace API.Controllers;
 
 [Route("api")]
 [ApiController]
-public class UserController(IPasswordService passwordService, IUnitOfWork unitOfWork) : ControllerBase
+public class UserController(IPasswordService passwordService, IUnitOfWork unitOfWork, IJwtService jwtService, IAdapterService adapterService) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDTO registration)
+    public async Task<IActionResult> Register([FromBody] RegistrationDto registration)
     {
         var hashedPassword = passwordService.HashPassword(registration.Password);
-        var user = new User
-        {
-            Username = registration.Username,
-            Email = registration.Email,
-            PasswordHash = hashedPassword.Item1,
-            PasswordSalt = hashedPassword.Item2,
-            CreatedAt = DateTime.UtcNow,
-        };
+        var user = adapterService.UserFromRegistration(registration, hashedPassword);
 
         try
         {
@@ -35,7 +28,7 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
     }
     
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginRequestDTO login)
+    public async Task<IActionResult> Login([FromBody] LoginRequestDto login)
     {
         var user = await unitOfWork.UserRepository.GetByUsername(login.Username);
         if (user == null)
@@ -48,7 +41,10 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
         {
             return Unauthorized();
         }
+
+        string token = jwtService.GenerateJwtToken(user.Id);
+        var loginResponse = adapterService.LoginResponse(user.Username, token);
         
-        return Ok();
+        return Ok(loginResponse);
     }
 }

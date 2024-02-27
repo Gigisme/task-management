@@ -1,10 +1,12 @@
-
+using System.Text;
 using Domain.Services;
 using Domain.Services.IServices;
 using Infrastructure.Database;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace API;
@@ -25,16 +27,38 @@ public class Program
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         builder.Services.AddScoped<IPasswordService, PasswordService>();
+        builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<IAdapterService, AdapterService>();
         
+        builder.Services.AddHttpContextAccessor();
+
+        var key = builder.Configuration.GetValue<string>("Jwt:Secret");
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(option =>
+        {
+            option.RequireHttpsMetadata = false;
+            option.SaveToken = true;
+            option.TokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+        });
+
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("_allowAny",
-                policy => { policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod();});
+                policy => { policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod(); });
         });
 
         builder.Services.AddControllers();
 
-        builder.Services.AddHttpContextAccessor();
+        
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
@@ -51,6 +75,8 @@ public class Program
         app.UseCors("_allowAny");
 
         app.UseHttpsRedirection();
+
+        app.UseAuthorization();
 
         app.MapControllers();
 

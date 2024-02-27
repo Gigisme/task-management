@@ -9,5 +9,5 @@ public class User
     public byte[] PasswordSalt { get; set; } = null!;
     public DateTime CreatedAt { get; set; }
     
-    public ICollection<UserTask> Tasks { get; set; } = null!;
+    public ICollection<UserTask> UserTasks { get; set; } = null!;
 }
