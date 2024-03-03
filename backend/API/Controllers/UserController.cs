@@ -15,16 +15,14 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
     {
         var hashedPassword = passwordService.HashPassword(registration.Password);
         var user = adapterService.UserFromRegistration(registration, hashedPassword);
+        
+        await unitOfWork.UserRepository.AddAsync(user);
+        user = await unitOfWork.UserRepository.GetByUsername(user.Username);
 
-        try
-        {
-            await unitOfWork.UserRepository.AddAsync(user);
-        }
-        catch (Exception e)
-        {
-            return StatusCode(503, "Service Unavailable - Database Connection Error");
-        }
-        return Ok();
+        string token = jwtService.GenerateJwtToken(user.Id);
+        var response = adapterService.LoginResponse(user.Username, token);
+        
+        return Ok(response);
     }
     
     [HttpPost("login")]

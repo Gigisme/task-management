@@ -1,6 +1,6 @@
 namespace Domain.Models.Enums;
 
-public enum TaskStatus
+public enum UserTaskStatus
 {
     Pending,
     InProgress,

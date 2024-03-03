@@ -15,9 +15,10 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
         Entities = context.Set<TEntity>();
     }
     
-    public Task<TEntity?> GetByIdAsync(TKey id)
+    public async Task<TEntity?> GetByIdAsync(TKey id)
     {
-        throw new NotImplementedException();
+        var entity = await Entities.FindAsync(id);
+        return entity;
     }
 
     public Task<IEnumerable<TEntity>> GetAllAsync()
@@ -31,13 +32,15 @@ public class Repository<TEntity, TKey> : IRepository<TEntity, TKey> where TEntit
         await Context.SaveChangesAsync();
     }
 
-    public Task UpdateAsync(TEntity entity)
+    public async Task UpdateAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        Entities.Update(entity);
+        await Context.SaveChangesAsync();
     }
 
-    public Task DeleteAsync(TEntity entity)
+    public async Task DeleteAsync(TEntity entity)
     {
-        throw new NotImplementedException();
+        Entities.Remove(entity);
+        await Context.SaveChangesAsync();
     }
 }
