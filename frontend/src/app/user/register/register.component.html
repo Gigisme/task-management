@@ -1,0 +1,21 @@
+<div class="mat-app-background flex flex-col h-full items-center justify-center">
+    <div class="border rounded-xl p-3 gap-2">
+        <form [formGroup]="form" class="flex flex-col" (ngSubmit)="onSubmit()">
+            <mat-form-field>
+                <mat-label>Username</mat-label>
+                <input matInput type="text" formControlName="username">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="email">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Password</mat-label>
+                <input matInput type="password" formControlName="password">
+            </mat-form-field>
+            <div>
+                <button mat-raised-button color="primary" type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
