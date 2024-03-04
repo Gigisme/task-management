@@ -7,9 +7,14 @@ namespace Infrastructure.Repositories;
 
 public class UserRepository(TaskDbContext db) : Repository<User, int>(db), IUserRepository
 {
-    public Task<bool> IsRegisteredAsync(string email)
+    public async Task<bool> IsEmailTakenAsync(string email)
     {
-        throw new NotImplementedException();
+        return await Entities.AnyAsync(u => u.Email == email);
+    }
+
+    public async Task<bool> IsUsernameTakenAsync(string username)
+    {
+        return await Entities.AnyAsync(u => u.Username == username);
     }
 
     public async Task<User?> GetByUsername(string username)

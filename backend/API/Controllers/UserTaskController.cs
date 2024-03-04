@@ -11,6 +11,9 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 {
     [HttpPost("create")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(DisplayDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> CreateTask([FromBody] CreateDto createDto)
     {
         var userIdString = contextAccessor.HttpContext?.User.Identity?.Name;
@@ -26,13 +29,16 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get([FromQuery] int id)
     {
         var userIdstring = contextAccessor.HttpContext?.User.Identity?.Name;
         if (!int.TryParse(userIdstring, out int userId)) { return BadRequest(); }
         
         var userTask = await unitOfWork.UserTaskRepository.GetByIdAsync(id);
-        if (userTask == null) return BadRequest();
+        if (userTask == null) return NotFound();
 
         var dto = adapterService.DtoFromUserTask(userTask);
         return Ok(dto);
@@ -40,6 +46,8 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 
     [HttpGet("all")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<DisplayDto>))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAllTasks()
     {
         var userIdString = contextAccessor.HttpContext?.User.Identity?.Name;
@@ -54,13 +62,16 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 
     [HttpPatch("patch")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChangeStatus([FromBody] PatchRequestDto patchDto)
     {
         var userIdstring = contextAccessor.HttpContext?.User.Identity?.Name;
         if (!int.TryParse(userIdstring, out int userId)) { return BadRequest(); }
         
         var userTask = await unitOfWork.UserTaskRepository.GetByIdAsync(patchDto.Id);
-        if (userTask == null) return BadRequest();
+        if (userTask == null) return NotFound();
 
         if (userTask.UserId != userId) return Unauthorized();
 
@@ -74,13 +85,16 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 
     [HttpPost("update")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayDto))]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Edit([FromBody] UpdateRequestDto updateDto)
     {
         var userIdString = contextAccessor.HttpContext?.User.Identity?.Name;
         if (!int.TryParse(userIdString, out int userId)) { return BadRequest(); }
         
         var userTask = await unitOfWork.UserTaskRepository.GetByIdAsync(updateDto.Id);
-        if (userTask == null) return BadRequest();
+        if (userTask == null) return NotFound();
         
         if (userTask.UserId != userId) return Unauthorized();
 
@@ -95,13 +109,16 @@ public class UserTaskController(IUnitOfWork unitOfWork, IHttpContextAccessor con
 
     [HttpDelete("delete")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete([FromQuery] int id)
     {
         var userIdString = contextAccessor.HttpContext?.User.Identity?.Name;
         if (!int.TryParse(userIdString, out int userId)) { return BadRequest(); }
         
         var userTask = await unitOfWork.UserTaskRepository.GetByIdAsync(id);
-        if (userTask == null) return BadRequest();
+        if (userTask == null) return NotFound();
         
         if (userTask.UserId != userId) return Unauthorized();
 

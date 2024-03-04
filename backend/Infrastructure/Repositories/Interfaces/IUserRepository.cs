@@ -5,6 +5,7 @@ namespace Infrastructure.Repositories.Interfaces;
 
 public interface IUserRepository : IRepository<User, int>
 {
-    Task<bool> IsRegisteredAsync(string email);
+    Task<bool> IsEmailTakenAsync(string email);
+    Task<bool> IsUsernameTakenAsync(string username);
     Task<User?> GetByUsername(string username);
 }
