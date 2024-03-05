@@ -11,6 +11,7 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register([FromBody] RegistrationDto registration)
     {
@@ -38,6 +39,7 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
     
     [HttpPost("login")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto login)
     {

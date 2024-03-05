@@ -10,6 +10,7 @@ import {LoginResponse} from "../../models/user/login-response";
 import {LoginRequest} from "../../models/user/login-request";
 import {CurrentUserService} from "../current-user.service";
 import {Router} from "@angular/router";
+import {ErrorMessageManager} from "../../errors/errorMessageManager";
 
 @Component({
     selector: 'app-login',
@@ -20,12 +21,15 @@ import {Router} from "@angular/router";
 })
 export class LoginComponent {
 
+    errorMessageManager: ErrorMessageManager;
+
     constructor(private http: HttpClient, private currentUser: CurrentUserService, private router: Router) {
+        this.errorMessageManager = new ErrorMessageManager(this.form)
     }
 
     form = new FormGroup({
-        username: new FormControl('', [Validators.required]),
-        password: new FormControl('', [Validators.required]),
+        username: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
+        password: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(20)]),
     })
 
     onSubmit() {
@@ -39,7 +43,15 @@ export class LoginComponent {
                 this.router.navigate(["/home"]);
             },
             error: err => {
-                console.log(err);
+                if (err.status == 401)
+                {
+                    const errorMessage = err.error;
+                    if (errorMessage === 'Invalid username') {
+                        this.form.get('username')?.setErrors({ 'invalidUsername': true });
+                    } else if (errorMessage === 'Invalid password') {
+                        this.form.get('password')?.setErrors({ 'invalidPassword': true });
+                    }
+                }
             },
         })
     }
@@ -47,7 +59,4 @@ export class LoginComponent {
     loginCall(request: LoginRequest) {
         return this.http.post<LoginResponse>("http://localhost:5262/api/login", request);
     }
-
-
-
 }

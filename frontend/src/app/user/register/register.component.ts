@@ -9,6 +9,7 @@ import {CurrentUserService} from "../current-user.service";
 import {RegisterRequest} from "../../models/user/register-request";
 import {LoginResponse} from "../../models/user/login-response";
 import {Router} from "@angular/router";
+import {ErrorMessageManager} from "../../errors/errorMessageManager";
 
 @Component({
     selector: 'app-register',
@@ -19,13 +20,16 @@ import {Router} from "@angular/router";
 })
 export class RegisterComponent {
 
+    errorMessageManager: ErrorMessageManager;
+
     constructor(private http: HttpClient, private currentUser: CurrentUserService, private router: Router) {
+        this.errorMessageManager = new ErrorMessageManager(this.form)
     }
 
     form = new FormGroup({
-        username: new FormControl('', [Validators.required]),
+        username: new FormControl('', [Validators.required,Validators.minLength(4), Validators.maxLength(20)]),
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required]),
+        password: new FormControl('', [Validators.required,Validators.minLength(7), Validators.maxLength(20)]),
     })
 
     onSubmit() {
@@ -38,7 +42,15 @@ export class RegisterComponent {
                 this.router.navigate(["/home"]);
             },
             error: err => {
-                console.log(err);
+                if (err.status == 409)
+                {
+                    const errorMessage = err.error;
+                    if (errorMessage === 'Username taken') {
+                        this.form.get('username')?.setErrors({ 'takenUsername': true });
+                    } else if (errorMessage === 'Email taken') {
+                        this.form.get('email')?.setErrors({ 'takenEmail': true });
+                    }
+                }
             },
         })
     }
