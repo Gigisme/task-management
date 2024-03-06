@@ -27,13 +27,15 @@ export class RegisterComponent {
     }
 
     form = new FormGroup({
-        username: new FormControl('', [Validators.required,Validators.minLength(4), Validators.maxLength(20)]),
+        username: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
         email: new FormControl('', [Validators.required, Validators.email]),
-        password: new FormControl('', [Validators.required,Validators.minLength(7), Validators.maxLength(20)]),
+        password: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(20)]),
     })
 
     onSubmit() {
-        if (this.form.invalid) { return; }
+        if (this.form.invalid) {
+            return;
+        }
         let request: RegisterRequest =
             {username: this.form.value.username!, email: this.form.value.email!, password: this.form.value.password!};
         this.registerCall(request).subscribe({
@@ -42,20 +44,19 @@ export class RegisterComponent {
                 this.router.navigate(["/home"]);
             },
             error: err => {
-                if (err.status == 409)
-                {
+                if (err.status == 409) {
                     const errorMessage = err.error;
                     if (errorMessage === 'Username taken') {
-                        this.form.get('username')?.setErrors({ 'takenUsername': true });
+                        this.form.get('username')?.setErrors({'takenUsername': true});
                     } else if (errorMessage === 'Email taken') {
-                        this.form.get('email')?.setErrors({ 'takenEmail': true });
+                        this.form.get('email')?.setErrors({'takenEmail': true});
                     }
                 }
             },
         })
     }
 
-    registerCall(request : RegisterRequest) {
+    registerCall(request: RegisterRequest) {
         return this.http.post<LoginResponse>("http://localhost:5262/api/register", request);
     }
 }

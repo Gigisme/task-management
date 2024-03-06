@@ -43,13 +43,12 @@ export class LoginComponent {
                 this.router.navigate(["/home"]);
             },
             error: err => {
-                if (err.status == 401)
-                {
+                if (err.status == 401) {
                     const errorMessage = err.error;
                     if (errorMessage === 'Invalid username') {
-                        this.form.get('username')?.setErrors({ 'invalidUsername': true });
+                        this.form.get('username')?.setErrors({'invalidUsername': true});
                     } else if (errorMessage === 'Invalid password') {
-                        this.form.get('password')?.setErrors({ 'invalidPassword': true });
+                        this.form.get('password')?.setErrors({'invalidPassword': true});
                     }
                 }
             },

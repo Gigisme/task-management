@@ -10,7 +10,6 @@ public class AdapterService : IAdapterService
 {
     public LoginResponseDto LoginResponse(string username, string token) => new()
     {
-        Username = username,
         Token = token,
     };
 

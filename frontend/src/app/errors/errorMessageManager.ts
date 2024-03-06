@@ -4,7 +4,7 @@ export class ErrorMessageManager {
     constructor(private form: FormGroup) {
     }
 
-    get(controlName: string) : string | null {
+    get(controlName: string): string | null {
         const control = this.form.get(controlName);
         if (control?.errors) {
             const errorKey = Object.keys(control.errors)[0];

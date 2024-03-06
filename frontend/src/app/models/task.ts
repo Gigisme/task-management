@@ -3,6 +3,6 @@ export class Task {
         public id: string,
         public name: string,
         public description: string,
-        public priority: number,) {
+        public status: number,) {
     }
 }

@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
 import {HomeComponent} from "./home/home.component";
 import {ReactiveFormsModule} from "@angular/forms";
+import {CurrentUserService} from "./user/current-user.service";
 
 @Component({
     selector: 'app-root',
@@ -11,6 +12,13 @@ import {ReactiveFormsModule} from "@angular/forms";
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
+
+    constructor(private currentUserService: CurrentUserService) {
+    }
+
+    ngOnInit(): void {
+        this.currentUserService.setCurrentUser();
+    }
     title = 'task-management';
 }

@@ -1,13 +1,15 @@
 using Domain.Models.DTO;
 using Domain.Services.IServices;
 using Infrastructure.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [Route("api")]
 [ApiController]
-public class UserController(IPasswordService passwordService, IUnitOfWork unitOfWork, IJwtService jwtService, IAdapterService adapterService) : ControllerBase
+public class UserController(IPasswordService passwordService, IUnitOfWork unitOfWork, IJwtService jwtService,
+    IAdapterService adapterService, IHttpContextAccessor contextAccessor) : ControllerBase
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
@@ -58,6 +60,23 @@ public class UserController(IPasswordService passwordService, IUnitOfWork unitOf
         string token = jwtService.GenerateJwtToken(user.Id);
         var loginResponse = adapterService.LoginResponse(user.Username, token);
         
+        return Ok(loginResponse);
+    }
+
+    [HttpGet("user")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LoginResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetUser()
+    {
+        var userIdString = contextAccessor.HttpContext?.User.Identity?.Name;
+        if (!int.TryParse(userIdString, out int userId)) { return BadRequest(); }
+
+        var user = await unitOfWork.UserRepository.GetByIdAsync(userId);
+        string token = jwtService.GenerateJwtToken(user.Id);
+        var loginResponse = adapterService.LoginResponse(user.Username, token);
+
         return Ok(loginResponse);
     }
 }
