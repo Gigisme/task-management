@@ -21,16 +21,15 @@ import {ErrorMessageManager} from "../../errors/errorMessageManager";
 export class RegisterComponent {
 
     errorMessageManager: ErrorMessageManager;
-
-    constructor(private http: HttpClient, private currentUser: CurrentUserService, private router: Router) {
-        this.errorMessageManager = new ErrorMessageManager(this.form)
-    }
-
     form = new FormGroup({
         username: new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(20)]),
         email: new FormControl('', [Validators.required, Validators.email]),
         password: new FormControl('', [Validators.required, Validators.minLength(7), Validators.maxLength(20)]),
     })
+
+    constructor(private http: HttpClient, private currentUser: CurrentUserService, private router: Router) {
+        this.errorMessageManager = new ErrorMessageManager(this.form)
+    }
 
     onSubmit() {
         if (this.form.invalid) {

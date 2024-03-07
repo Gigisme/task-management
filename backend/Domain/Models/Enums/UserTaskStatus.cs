@@ -4,5 +4,5 @@ public enum UserTaskStatus
 {
     Pending,
     InProgress,
-    Completed,
+    Completed
 }

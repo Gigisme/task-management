@@ -24,7 +24,11 @@ import {PatchRequest} from "../../models/user/patch-request";
     templateUrl: './task-list.component.html',
     styleUrl: './task-list.component.css'
 })
-export class TaskListComponent implements OnInit{
+export class TaskListComponent implements OnInit {
+    toDo: Task[] = [];
+    doing: Task[] = [];
+    done: Task[] = [];
+
     constructor(public dialog: MatDialog, private http: HttpClient, private currentUserService: CurrentUserService) {
     }
 
@@ -42,11 +46,6 @@ export class TaskListComponent implements OnInit{
             },
         })
     }
-
-    toDo: Task[] = [];
-    doing: Task[] = [];
-    done: Task[] = [];
-
 
     openCreateTaskDialog(taskList: Task[]): void {
         const dialogRef: MatDialogRef<CreateTaskComponent> = this.dialog.open(
@@ -123,7 +122,7 @@ export class TaskListComponent implements OnInit{
         })
     }
 
-    removeTask(task: Task){
+    removeTask(task: Task) {
         switch (task.status) {
             case 0:
                 this.toDo = this.toDo.filter(t => t.id != task.id)

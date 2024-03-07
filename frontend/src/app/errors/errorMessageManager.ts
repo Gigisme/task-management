@@ -1,6 +1,17 @@
 import {FormGroup} from "@angular/forms";
 
 export class ErrorMessageManager {
+    errorMessages: { [key: string]: string } = {
+        required: 'This field is required.',
+        minlength: 'Minimum length is ',
+        maxlength: 'Maximum length is 20 characters.',
+        invalidUsername: 'Invalid username.',
+        invalidPassword: 'Invalid password.',
+        email: 'Email address is not valid.',
+        takenUsername: 'Username is taken.',
+        takenEmail: 'Email is taken.',
+    };
+
     constructor(private form: FormGroup) {
     }
 
@@ -17,15 +28,4 @@ export class ErrorMessageManager {
         }
         return null;
     }
-
-    errorMessages: { [key: string]: string } = {
-        required: 'This field is required.',
-        minlength: 'Minimum length is ',
-        maxlength: 'Maximum length is 20 characters.',
-        invalidUsername: 'Invalid username.',
-        invalidPassword: 'Invalid password.',
-        email: 'Email address is not valid.',
-        takenUsername: 'Username is taken.',
-        takenEmail: 'Email is taken.',
-    };
 }

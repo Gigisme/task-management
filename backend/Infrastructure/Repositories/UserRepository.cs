@@ -20,11 +20,7 @@ public class UserRepository(TaskDbContext db) : Repository<User, int>(db), IUser
     public async Task<User?> GetByUsername(string username)
     {
         var user = await Entities.FirstOrDefaultAsync(u => u.Username == username);
-        if (user == null)
-        {
-            return null;
-        }
-        
+
         return user;
     }
 }

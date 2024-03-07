@@ -1,15 +1,13 @@
-using System.Reflection;
 using System.Text;
 using Domain.Services;
 using Domain.Services.IServices;
 using Infrastructure.Database;
 using Infrastructure.Repositories;
 using Infrastructure.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-
 
 namespace API;
 
@@ -18,20 +16,20 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+
         builder.Configuration.AddJsonFile("appsettings.json");
 
-        builder.Services.AddDbContext<TaskDbContext>(options => 
+        builder.Services.AddDbContext<TaskDbContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-        
+
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IUserTaskRepository, UserTaskRepository>();
         builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-        
+
         builder.Services.AddScoped<IPasswordService, PasswordService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IAdapterService, AdapterService>();
-        
+
         builder.Services.AddHttpContextAccessor();
 
         var key = builder.Configuration.GetValue<string>("Jwt:Secret");
@@ -43,10 +41,10 @@ public class Program
         {
             option.RequireHttpsMetadata = false;
             option.SaveToken = true;
-            option.TokenValidationParameters = new TokenValidationParameters()
+            option.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key!)),
                 ValidateIssuer = false,
                 ValidateAudience = false
             };
@@ -60,32 +58,32 @@ public class Program
 
         builder.Services.AddControllers();
 
-        
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
+
         builder.Services.AddSwaggerGen(option =>
         {
-            option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description =
                     "JWT Authorization header is using Bearer scheme. \r\n\r\n" +
                     "Enter the token, Bearer will be prepended. \r\n\r\n" +
                     "Example: Bearer \" d5f41g85d1f52a\"",
-                Name = "Authorization", 
+                Name = "Authorization",
                 In = ParameterLocation.Header,
                 Scheme = "Bearer",
                 BearerFormat = "JWT {token}",
-                Type = SecuritySchemeType.Http,
+                Type = SecuritySchemeType.Http
             });
 
-            option.AddSecurityRequirement(new OpenApiSecurityRequirement()
+            option.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
-                    new OpenApiSecurityScheme()
+                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference()
+                        Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"

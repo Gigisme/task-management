@@ -9,7 +9,7 @@ public class UserTaskRepository(TaskDbContext db) : Repository<UserTask, int>(db
 {
     public async Task<IEnumerable<UserTask>> GetAllAsync(int userId)
     {
-        var userTasks = await db.UserTasks.Where(ut => ut.UserId == userId).ToListAsync();
+        var userTasks = await Entities.Where(ut => ut.UserId == userId).ToListAsync();
         return userTasks;
     }
 }

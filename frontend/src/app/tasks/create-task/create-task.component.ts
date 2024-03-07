@@ -11,14 +11,14 @@ import {FormBuilder, FormsModule, ReactiveFormsModule} from "@angular/forms";
     styleUrl: './create-task.component.css'
 })
 export class CreateTaskComponent {
-    constructor(public dialogRef: MatDialogRef<CreateTaskComponent>, private fb: FormBuilder) {
-    }
-
     taskForm = this.fb.group({
         name: '',
         description: '',
         priority: 1,
     });
+
+    constructor(public dialogRef: MatDialogRef<CreateTaskComponent>, private fb: FormBuilder) {
+    }
 
     onSubmit() {
         this.dialogRef.close(this.taskForm.value)

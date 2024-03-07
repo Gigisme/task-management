@@ -1,5 +1,4 @@
 using Domain.Models;
-using Infrastructure.Database;
 
 namespace Infrastructure.Repositories.Interfaces;
 

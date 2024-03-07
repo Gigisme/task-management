@@ -12,7 +12,9 @@ import {CurrentUserService} from "./user/current-user.service";
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
+
+    title = 'task-management';
 
     constructor(private currentUserService: CurrentUserService) {
     }
@@ -20,5 +22,4 @@ export class AppComponent implements OnInit{
     ngOnInit(): void {
         this.currentUserService.setCurrentUser();
     }
-    title = 'task-management';
 }

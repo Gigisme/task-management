@@ -16,18 +16,16 @@ export class CurrentUserService {
 
     setCurrentUser() {
         const token = localStorage.getItem('token');
-        if (token)
-        {
+        if (token) {
             const headers = new HttpHeaders({
                 'Authorization': `Bearer ${token}`
             })
-            this.http.get<LoginResponse>("http://localhost:5262/api/user", { headers }).subscribe({
+            this.http.get<LoginResponse>("http://localhost:5262/api/user", {headers}).subscribe({
                 next: value => {
                     this.saveAuth(value);
                 },
                 error: err => {
-                    if (err.status == 401)
-                    {
+                    if (err.status == 401) {
                         this.currentUser$.next(null);
                     } else {
                         console.log(err)

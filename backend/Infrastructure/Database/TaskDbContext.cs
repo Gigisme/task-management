@@ -3,15 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Database;
 
-public class TaskDbContext : DbContext
+public class TaskDbContext(DbContextOptions<TaskDbContext> options) : DbContext(options)
 {
-    public TaskDbContext(DbContextOptions<TaskDbContext> options) : base(options)
-    {
-        
-    }
-    
-    public DbSet<User> Users { get; set; }
-    public DbSet<UserTask> UserTasks { get; set; }
+    public DbSet<User> Users { get; init; } = null!;
+    public DbSet<UserTask> UserTasks { get; init; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -7,7 +7,6 @@ namespace Domain.Services;
 public class PasswordService : IPasswordService
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="password"></param>
     /// <returns>Hash, Salt</returns>
@@ -18,8 +17,8 @@ public class PasswordService : IPasswordService
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         return new Tuple<byte[], byte[]>(hash, salt);
     }
-    
-    public bool VerifyPassword(string password, byte[] hash, byte[] salt )
+
+    public bool VerifyPassword(string password, byte[] hash, byte[] salt)
     {
         using var hmac = new HMACSHA512(salt);
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));

@@ -1,5 +1,5 @@
 using Domain.Models;
-using Domain.Models.DTO;
+using Domain.Models.DTO.User;
 using Domain.Models.DTO.UserTask;
 using Domain.Models.Enums;
 using Domain.Services.IServices;
@@ -8,33 +8,46 @@ namespace Domain.Services;
 
 public class AdapterService : IAdapterService
 {
-    public LoginResponseDto LoginResponse(string username, string token) => new()
+    public LoginResponseDto LoginResponse(string username, string token)
     {
-        Token = token,
-    };
+        return new LoginResponseDto
+        {
+            Username = username,
+            Token = token
+        };
+    }
 
-    public User UserFromRegistration(RegistrationDto registration, Tuple<byte[],byte[]> hashedPassword) => new()
+    public User UserFromRegistration(RegistrationDto registration, Tuple<byte[], byte[]> hashedPassword)
     {
-        Username = registration.Username,
-        Email = registration.Email,
-        PasswordHash = hashedPassword.Item1,
-        PasswordSalt = hashedPassword.Item2,
-        CreatedAt = DateTime.UtcNow,
-    };
+        return new User
+        {
+            Username = registration.Username,
+            Email = registration.Email,
+            PasswordHash = hashedPassword.Item1,
+            PasswordSalt = hashedPassword.Item2,
+            CreatedAt = DateTime.UtcNow
+        };
+    }
 
-    public UserTask UserTaskFromDto(CreateDto userTask, int userId) => new()
+    public UserTask UserTaskFromDto(CreateDto userTask, int userId)
     {
-        Name = userTask.Name,
-        Description = userTask.Description,
-        Status = UserTaskStatus.Pending,
-        UserId = userId,
-    };
+        return new UserTask
+        {
+            Name = userTask.Name,
+            Description = userTask.Description,
+            Status = UserTaskStatus.Pending,
+            UserId = userId
+        };
+    }
 
-    public DisplayDto DtoFromUserTask(UserTask userTask) => new()
+    public DisplayDto DtoFromUserTask(UserTask userTask)
     {
-        Id = userTask.Id,
-        Name = userTask.Name,
-        Description = userTask.Description,
-        Status = userTask.Status,
-    };
+        return new DisplayDto
+        {
+            Id = userTask.Id,
+            Name = userTask.Name,
+            Description = userTask.Description,
+            Status = userTask.Status
+        };
+    }
 }

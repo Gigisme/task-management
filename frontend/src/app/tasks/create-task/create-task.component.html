@@ -1,20 +1,20 @@
-<form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="w-full h-full mx-auto p-6 bg-white">
+<form (ngSubmit)="onSubmit()" [formGroup]="taskForm" class="w-full h-full mx-auto p-6 bg-white">
     <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-        <input type="text" formControlName="name"
-               class="w-full px-3 py-2 border rounded focus:outline-none focus:shadow-outline-blue focus:border-blue-300"/>
+        <input class="w-full px-3 py-2 border rounded focus:outline-none focus:shadow-outline-blue focus:border-blue-300" formControlName="name"
+               type="text"/>
     </div>
     <div class="mb-4">
         <label class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-        <textarea type="text" formControlName="description"
-                  class="resize-none w-full h-36 px-3 py-2 border rounded focus:outline-none focus:shadow-outline-blue focus:border-blue-300">
+        <textarea class="resize-none w-full h-36 px-3 py-2 border rounded focus:outline-none focus:shadow-outline-blue focus:border-blue-300" formControlName="description"
+                  type="text">
 
     </textarea>
     </div>
     <div>
-        <input type="number" min="1" max="5" [defaultValue]="1" formControlName="priority" class="w-8">
-        <button type="submit"
-                class="absolute bottom-2 left-5 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
+        <input [defaultValue]="1" class="w-8" formControlName="priority" max="5" min="1" type="number">
+        <button class="absolute bottom-2 left-5 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline-blue active:bg-blue-800"
+                type="submit"
         >Create
         </button>
     </div>
