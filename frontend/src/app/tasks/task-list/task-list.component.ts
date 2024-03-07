@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Task} from "../../models/task";
+import {Task} from "../../models/task/task";
 import {CreateTaskComponent} from "../create-task/create-task.component";
 import {MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {v4} from "uuid";
 import {
     CdkDrag,
     CdkDragDrop,
@@ -15,12 +14,14 @@ import {
 import {MatCardModule} from "@angular/material/card";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {CurrentUserService} from "../../user/current-user.service";
-import {PatchRequest} from "../../models/user/patch-request";
+import {PatchRequest} from "../../models/task/patch-request";
+import {MatButtonModule} from "@angular/material/button";
+import {CreateRequest} from "../../models/task/create-request";
 
 @Component({
     selector: 'app-task-list',
     standalone: true,
-    imports: [CommonModule, CreateTaskComponent, CdkDropList, CdkDropListGroup, CdkDrag, MatCardModule],
+    imports: [CommonModule, CreateTaskComponent, CdkDropList, CdkDropListGroup, CdkDrag, MatCardModule, MatButtonModule],
     templateUrl: './task-list.component.html',
     styleUrl: './task-list.component.css'
 })
@@ -29,14 +30,16 @@ export class TaskListComponent implements OnInit {
     doing: Task[] = [];
     done: Task[] = [];
 
+    headers = new HttpHeaders({
+        'Authorization': `Bearer ${this.currentUserService.currentUser$.value?.token}`
+    })
+
     constructor(public dialog: MatDialog, private http: HttpClient, private currentUserService: CurrentUserService) {
     }
 
     ngOnInit(): void {
         const token = this.currentUserService.currentUser$.value?.token;
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        })
+        const headers = this.headers;
         this.http.get<Task[]>("http://localhost:5262/api/task/all", {headers}).subscribe({
             next: value => {
                 this.assignTasks(value)
@@ -47,7 +50,7 @@ export class TaskListComponent implements OnInit {
         })
     }
 
-    openCreateTaskDialog(taskList: Task[]): void {
+    openCreateTaskDialog(): void {
         const dialogRef: MatDialogRef<CreateTaskComponent> = this.dialog.open(
             CreateTaskComponent,
             {
@@ -59,14 +62,24 @@ export class TaskListComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 let name = result.name;
-                let desc = result.description;
-                if (typeof name === 'string' && typeof desc === 'string') {
-                    let task = new Task(v4(), name, desc, result.priority)
-                    //console.log('Data recieved: ',task);
-                    taskList.push(task);
+                let description = result.description;
+                if (typeof name === 'string' && typeof description === 'string') {
+                    let task: CreateRequest = {name, description}
+                    this.createTaskCall(task).subscribe({
+                        next: value => {
+                            this.toDo.push(value)
+                        },
+                        error: err => {
+                            console.log(err)
+                        },
+                    })
                 }
             }
         })
+    }
+
+    openEditTaskDialog(task: Task): void {
+
     }
 
     drop(event: CdkDragDrop<Task[]>): void {
@@ -74,9 +87,9 @@ export class TaskListComponent implements OnInit {
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex)
         } else {
+            const task = event.previousContainer.data[event.previousIndex]
             const status = event.container.id.charAt(event.container.id.length - 1)
-            const userTaskId = event.previousContainer.data[event.previousIndex].id
-            const request: PatchRequest = {id: parseInt(userTaskId), status: parseInt(status)}
+            const request: PatchRequest = {id: parseInt(task.id), status: parseInt(status)}
             transferArrayItem(
                 event.previousContainer.data,
                 event.container.data,
@@ -84,7 +97,7 @@ export class TaskListComponent implements OnInit {
                 event.currentIndex);
             this.moveTaskCall(request).subscribe({
                 next: value => {
-
+                    task.status = parseInt(status)
                 },
                 error: err => {
                     console.log(err)
@@ -99,10 +112,17 @@ export class TaskListComponent implements OnInit {
         }
     }
 
+    editTaskCall(task: Task) {
+
+    }
+
+    createTaskCall(task: CreateRequest) {
+        const headers = this.headers;
+        return this.http.post<Task>("http://localhost:5262/api/task/create", task,{headers})
+    }
+
     moveTaskCall(request: PatchRequest) {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${this.currentUserService.currentUser$.value?.token}`
-        })
+        const headers = this.headers;
         return this.http.patch("http://localhost:5262/api/task/patch", request, {headers})
     }
 
@@ -137,12 +157,11 @@ export class TaskListComponent implements OnInit {
     }
 
     deleteCall(task: Task) {
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${this.currentUserService.currentUser$.value?.token}`
-        })
+        const headers = this.headers;
         const taskId = parseInt(task.id)
         this.http.delete(`http://localhost:5262/api/task/delete?id=${taskId}`, {headers}).subscribe({
             next: value => {
+                console.log(task)
                 this.removeTask(task)
             },
             error: err => {
