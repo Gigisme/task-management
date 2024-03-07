@@ -17,6 +17,7 @@ import {CurrentUserService} from "../../user/current-user.service";
 import {PatchRequest} from "../../models/task/patch-request";
 import {MatButtonModule} from "@angular/material/button";
 import {CreateRequest} from "../../models/task/create-request";
+import {UpdateTaskComponent} from "../update-task/update-task.component";
 
 @Component({
     selector: 'app-task-list',
@@ -78,8 +79,29 @@ export class TaskListComponent implements OnInit {
         })
     }
 
-    openEditTaskDialog(task: Task): void {
+    openUpdateTaskDialog(task: Task): void {
+        const dialogRef: MatDialogRef<UpdateTaskComponent> = this.dialog.open(
+            UpdateTaskComponent,
+            {
+                width: '600px',
+                height: '400px',
+                data: task,
+            }
+        )
 
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.updateTaskCall(result).subscribe({
+                    next: value => {
+                        this.editTask(value)
+                        console.log(task)
+                    },
+                    error: err => {
+                        console.log(err)
+                    },
+                })
+            }
+        })
     }
 
     drop(event: CdkDragDrop<Task[]>): void {
@@ -112,8 +134,9 @@ export class TaskListComponent implements OnInit {
         }
     }
 
-    editTaskCall(task: Task) {
-
+    updateTaskCall(task: Task) {
+        const headers = this.headers;
+        return this.http.put<Task>("http://localhost:5262/api/task/update", task, {headers})
     }
 
     createTaskCall(task: CreateRequest) {
@@ -152,6 +175,24 @@ export class TaskListComponent implements OnInit {
                 break
             case 2:
                 this.done = this.done.filter(t => t.id != task.id)
+                break;
+        }
+    }
+
+    editTask(task: Task) {
+        let index = 0
+        switch (task.status) {
+            case 0:
+                index = this.toDo.findIndex(t => t.id == task.id);
+                this.toDo[index] = task
+                break;
+            case 1:
+                index = this.doing.findIndex(t => t.id == task.id);
+                this.doing[index] = task
+                break
+            case 2:
+                index = this.done.findIndex(t => t.id == task.id);
+                this.done[index] = task
                 break;
         }
     }

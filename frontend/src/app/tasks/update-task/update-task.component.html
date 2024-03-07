@@ -1,0 +1,15 @@
+<div class="p-4">
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="flex flex-col justify-center">
+        <mat-form-field>
+            <mat-label>Title</mat-label>
+            <input formControlName="name" matInput type="text">
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Description</mat-label>
+            <textarea formControlName="description" matInput type="text" class="max-h-48"></textarea>
+        </mat-form-field>
+        <div>
+            <button color="primary" mat-raised-button type="submit">Update</button>
+        </div>
+    </form>
+</div>

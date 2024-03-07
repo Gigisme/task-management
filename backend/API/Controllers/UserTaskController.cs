@@ -90,7 +90,7 @@ public class UserTaskController(
         return Ok(responseDto);
     }
 
-    [HttpPost("update")]
+    [HttpPut("update")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DisplayDto))]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
