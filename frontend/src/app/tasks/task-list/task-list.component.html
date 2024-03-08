@@ -1,8 +1,8 @@
 <div cdkDropListGroup class="flex flex-row gap-4">
-    <div class="flex flex-col items-center">
-        <div class="border flex w-fit h-fit px-10 py-4 justify-center">
-            To Do
-        </div>
+    <div class="flex flex-col items-center gap-2">
+        <mat-card>
+            <mat-card-title class="px-5 py-2">To Do</mat-card-title>
+        </mat-card>
         <div (cdkDropListDropped)="drop($event)" [cdkDropListData]="toDo" cdkDropList
              class="task-container relative">
             <div *ngFor="let task of toDo" cdkDrag>
@@ -24,10 +24,10 @@
             <button (click)="openCreateTaskDialog()" mat-raised-button class="!absolute bottom-1 left-1">Create New Task</button>
         </div>
     </div>
-    <div class="flex flex-col items-center">
-        <div class="border flex w-fit h-fit px-10 py-4 justify-center">
-            Doing
-        </div>
+    <div class="flex flex-col items-center gap-2">
+        <mat-card>
+            <mat-card-title class="px-5 py-2">Doing</mat-card-title>
+        </mat-card>
         <div (cdkDropListDropped)="drop($event)" [cdkDropListData]="doing" cdkDropList class="task-container">
             <div *ngFor="let task of doing" cdkDrag>
                 <mat-card>
@@ -47,10 +47,10 @@
             </div>
         </div>
     </div>
-    <div class="flex flex-col items-center">
-        <div class="border flex w-fit h-fit px-10 py-4 justify-center">
-            Done
-        </div>
+    <div class="flex flex-col items-center gap-2">
+        <mat-card>
+            <mat-card-title class="px-5 py-2">Done</mat-card-title>
+        </mat-card>
         <div (cdkDropListDropped)="drop($event)" [cdkDropListData]="done" cdkDropList class="task-container">
             <div *ngFor="let task of done" cdkDrag>
                 <mat-card>
